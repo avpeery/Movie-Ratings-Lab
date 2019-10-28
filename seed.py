@@ -37,6 +37,24 @@ def load_users():
 def load_movies():
     """Load movies from u.item into database."""
 
+    # Delete all rows in table, so if we need to run this a second time,
+    Movie.query.delete()
+
+    # Read u.user file and insert data
+    for row in open("seed_data/u.items"):
+        row = row.rstrip()
+        movie_id, title, released_at, video_released_at, imbd_url, unknown, action, adventure, animation, children, comedy, crime, documentary, drama, fantasy, filmnoir, horror, musical, mystery, romance, scifi, thriller, war, western = row.split("|")
+
+        movie = Movie(movie_id=movie_id,
+                    title=title,
+                    released_at=released_at,
+                    imbd_url= imbd_url)
+
+        # We need to add to the session or it won't ever be stored
+        db.session.add(user)
+
+    # Once we're done, we should commit our work
+    db.session.commit()
 
 def load_ratings():
     """Load ratings from u.data into database."""
