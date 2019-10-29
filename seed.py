@@ -45,9 +45,10 @@ def load_movies():
     # Read u.user file and insert data
     for row in open("seed_data/u.item"):
         row = row.rstrip()
-        movie_id, title, released_at, video_released_at, imbd_url, unknown, action, adventure, animation, children, comedy, crime, documentary, drama, fantasy, film_noir, horror, musical, mystery, romance, scifi, thriller, war, western = row.split("|")
-        
+        movie_id, title, released_at, video_released_at, imdb_url = row.split("|")[:5]
+
         new_title = ""
+
         for char in title:
             if char == "(":
                 break  
@@ -55,14 +56,14 @@ def load_movies():
                 new_title+=char
 
         if released_at:
-            released_at = datetime.datetime.strptime(released_at, "%d-%b-%Y")
+            released_at = datetime.strptime(released_at, "%d-%b-%Y")
         else:
             released_at = None
 
         movie = Movie(movie_id=movie_id,
                     title=new_title,
                     released_at=released_at,
-                    imbd_url= imbd_url)
+                    imdb_url=imdb_url)
 
         # We need to add to the session or it won't ever be stored
         db.session.add(movie)
@@ -83,7 +84,11 @@ def load_ratings():
                         user_id=user_id,
                         score=score)
 
+        # We need to add to the session or it won't ever be stored
+        db.session.add(ratings)
 
+    # Once we're done, we should commit our work
+    db.session.commit()
 
 def set_val_user_id():
     """Set value for the next user_id after seeding database"""
