@@ -32,6 +32,23 @@ def user_list():
     users = User.query.all()
     return render_template("user_list.html", users=users)
 
+@app.route("/register")
+def register_form():
+
+    return render_template("register_form.html")
+
+@app.route("/register", method= ["POST"])
+def register_process():
+    input_email = request.form('email')
+    input_password = request.form('password')
+
+    if User.query.filter(User.email = input_email).first():
+        pass
+    else:
+        input_email = User(email = input_email, password = input_password)
+
+    return redirect("/")
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
