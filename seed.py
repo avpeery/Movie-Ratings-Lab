@@ -54,8 +54,7 @@ def load_movies():
         else:
             released_at = None
 
-        movie = Movie(movie_id=movie_id,
-                    title=title,
+        movie = Movie(title=title,
                     released_at=released_at,
                     imdb_url=imdb_url)
 
