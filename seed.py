@@ -45,15 +45,9 @@ def load_movies():
     # Read u.user file and insert data
     for row in open("seed_data/u.item"):
         row = row.rstrip()
-        movie_id, title, released_at, video_released_at, imdb_url = row.split("|")[:5]
+        movie_id, title, released_at, junk, imdb_url = row.split("|")[:5]
 
-        new_title = ""
-
-        for char in title:
-            if char == "(":
-                break  
-            else:
-                new_title+=char
+        title = title[:-7]
 
         if released_at:
             released_at = datetime.strptime(released_at, "%d-%b-%Y")
@@ -61,7 +55,7 @@ def load_movies():
             released_at = None
 
         movie = Movie(movie_id=movie_id,
-                    title=new_title,
+                    title=title,
                     released_at=released_at,
                     imdb_url=imdb_url)
 
@@ -82,7 +76,7 @@ def load_ratings():
 
         ratings = Rating(movie_id=movie_id,
                         user_id=user_id,
-                        score=score)
+                        score=int(score))
 
         # We need to add to the session or it won't ever be stored
         db.session.add(ratings)
