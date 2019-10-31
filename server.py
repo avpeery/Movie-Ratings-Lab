@@ -73,15 +73,32 @@ def login_process():
         flash("You were successfully logged in!")
         return redirect('/')
 
+@app.route("/movie")
+def show_movie_title():
+
+    movie_info = Movie.query.first()
+
+    return render_template("movie_info.html",
+                            movie_info = movie_info)
+
+
 @app.route("/users/<int:user_id>")
-def show_user_info():
+def show_user_info(user_id):
 
-    user_info = db.session.query.filter(User.user_id == user_id)
-    user_rating = user_info.ratings
+    # user_info = User.query.filter_by(user_id = user_id).first()
+    # user_rating = user_info.ratings
+    # print(user_rating[0])
+    # print(user_rating[0].movie_id)
 
-    for r in user_rating:
-        print(r.movie.title)
+    # return render_template("user_info.html",
+    #                         user_info = user_info,
+    #                         user_rating = user_rating)
 
+    user_info = User.query.filter_by(user_id = user_id).first()
+
+
+    return render_template("user_info.html",
+                            user_info = user_info)
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
