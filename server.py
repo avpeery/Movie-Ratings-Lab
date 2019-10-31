@@ -25,6 +25,7 @@ def index():
     """Homepage."""
     return render_template('homepage.html')
 
+
 @app.route("/users")
 def user_list():
     """Show list of users/"""
@@ -32,10 +33,12 @@ def user_list():
     users = User.query.all()
     return render_template("user_list.html", users=users)
 
+
 @app.route("/register")
 def register_form():
 
     return render_template("register_form.html")
+
 
 @app.route("/register", methods= ["POST"])
 def register_process():
@@ -51,27 +54,41 @@ def register_process():
 
     return redirect("/")
 
+
 @app.route("/login")
 def login_user():
 
     return render_template("login.html")
 
+
 @app.route("/login", methods=['POST'])
 def login_process():
 
-    login_email = request.form.get("email")
-    login_password = request.form.get("password")
-    print(login_password)
+    email = request.form.get("email")
+    password = request.form.get("password")
 
-    check_login = User.query.filter_by(email = login_email).first()
+    user = User.query.filter((User.email == email), (User.password == password)).first()
 
-    if check_login == None:
-        flash("Incorrect input! You are stuck on this page. There is no redirect.")
-        return render_template("login.html")
+    if user: 
+        session['user_email'] = user.email
+        session['user_id'] = user.user_id
 
-    if (login_email == check_login.email) and (login_password == check_login.password):
-        flash("You were successfully logged in!")
-        return redirect('/')
+        flash("Succesfully logged in!")
+        return render_template("user_info.html", user=user)
+
+    flash("That is not a valid email and password")
+    return redirect('/login')
+
+
+@app.route("/logout")
+def logout_user():
+
+    del session['user_email']
+    del session['user_id']
+    flash('Succesfully logged out!')
+
+    return redirect('/')
+
 
 @app.route("/movie")
 def show_movie_title():
@@ -82,23 +99,38 @@ def show_movie_title():
                             movie_info = movie_info)
 
 
+@app.route("/movies")
+def list_movies():
+
+    movies = Movie.query.order_by(Movie.title).all()
+
+    return render_template("movie_list.html", movies=movies)
+
+
+@app.route('/<movie_id>')
+def show_movie_info(movie_id):
+
+    movie = Movie.query.filter(Movie.movie_id == movie_id).one()
+
+    return render_template('movie_info.html', movie = movie)
+
+
+@app.route("/user-page")
+def show_logged_in(user_id):
+
+    user = User.query.filter_by(user_id = session['user_id']).first()
+
+    return render_template("user_info.html",
+                            user = user)
+
+
 @app.route("/users/<int:user_id>")
 def show_user_info(user_id):
 
-    # user_info = User.query.filter_by(user_id = user_id).first()
-    # user_rating = user_info.ratings
-    # print(user_rating[0])
-    # print(user_rating[0].movie_id)
-
-    # return render_template("user_info.html",
-    #                         user_info = user_info,
-    #                         user_rating = user_rating)
-
-    user_info = User.query.filter_by(user_id = user_id).first()
-
+    user = User.query.filter_by(user_id = user_id).first()
 
     return render_template("user_info.html",
-                            user_info = user_info)
+                            user = user)
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
