@@ -107,12 +107,13 @@ def list_movies():
     return render_template("movie_list.html", movies=movies)
 
 
-@app.route('/<movie_id>')
+@app.route('/movies/<movie_id>')
 def show_movie_info(movie_id):
 
-    movie = Movie.query.filter(Movie.movie_id == movie_id).one()
+    movie = Movie.query.filter_by(movie_id = movie_id).first()
 
-    return render_template('movie_info.html', movie = movie)
+    return render_template("movie_info.html",
+                            movie = movie)
 
 
 @app.route("/user-page")

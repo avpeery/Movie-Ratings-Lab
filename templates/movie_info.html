@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
 
-  <h2>Movies</h2>
+  <h2>{{ movie.title }}</h2>
 
   <ul>
-      <li>
-          {{ movie_info.title}} {{ movie_info.ratings }}
-      </li>
-
+    {% for r in movie.ratings %}
+    <li>
+      Score: {{ r.score }}
+    </li>
+    {% endfor %}
 
   </ul>
 
